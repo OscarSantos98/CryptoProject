@@ -1,0 +1,10 @@
+USE master
+GO
+ALTER DATABASE CryptoDB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+IF EXISTS (
+  SELECT [name]
+   FROM sys.databases
+   WHERE [name] = N'CryptoDB'
+)
+DROP DATABASE CryptoDB
+GO
