@@ -1,0 +1,43 @@
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    exclude:
+    - CryptoAPI/**/*
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/CryptoBlazor.sln'
+  projects: '**/CryptoBlazor/**/*.csproj'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- task: NuGetToolInstaller@1
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: build
+    projects: '$(projects)'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publishing App...'
+  inputs:
+    command: publish
+    publishWebProjects: true
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: true
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+    artifact: 'CryptoBlazor'
+    publishLocation: 'pipeline'
