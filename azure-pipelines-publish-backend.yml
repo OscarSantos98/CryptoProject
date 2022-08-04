@@ -1,0 +1,65 @@
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    exclude:
+    - CryptoBlazor/**/*
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/CryptoAPI.sln'
+  project: '**/CryptoAPI.csproj'
+  projects: '**/CryptoAPI/**/*.csproj'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  ConnectionStrings.CryptoDB: $(connectionstring)
+
+steps:
+- task: NuGetToolInstaller@1
+  inputs:
+    versionSpec: '>=6.0.3'
+    
+- task: FileTransform@1
+  displayName: 'File transformation: appsettings.json'
+  inputs:
+    folderPath: '$(System.DefaultWorkingDirectory)/CryptoAPI/CryptoAPI/'
+    fileType: 'json'
+    targetFiles: '**/appsettings.json'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: '$(projects)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet build $(buildConfiguration)'
+  inputs:
+    command: build
+    projects: '$(projects)'
+    arguments: '--configuration $(buildConfiguration) --no-restore'
+    
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test $(buildConfiguration)'
+  inputs:
+    command: test
+    projects: '**/*[Tt]ests/*.csproj'
+    arguments: '--configuration $(buildConfiguration) --no-build'
+    testRunTitle: 'test-$(Build.BuildId)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish $(buildConfiguration)'
+  inputs:
+    command: 'publish'
+    publishWebProjects: False
+    arguments: '$(System.DefaultWorkingDirectory)\CryptoAPI\CryptoAPI\CryptoAPI.csproj --configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: True
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+    artifact: 'CryptoAPI'
+    publishLocation: 'pipeline'
