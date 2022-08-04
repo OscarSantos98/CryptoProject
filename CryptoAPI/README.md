@@ -56,6 +56,29 @@ The following tools were used to design and develop the backend.
 4. [Visual Studio](https://visualstudio.microsoft.com/fr/)
 5. [POSTMAN](https://www.postman.com/)
 
+## DB Connection string
+
+Before building your code, you need to add the connection string of your database. Create an appsettings.Development.json file which by default is used by launchSettings.json when you do not specify other environment.
+This file is ignored by the .gitignore so you can freely put your connection there without risk to share it on your repo.
+When deploying with the Pipeline it will replace the connection on appsettings.json as appsettings.Development.json does not exist in the repo.
+
+The file should look similar to the following
+```
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "ConnectionStrings": {
+    "CryptoDB": "Server=<NAME_OF_YOUR_LOCAL_MSFT_SQL_Server>;Initial Catalog=CryptoDB;Trusted_Connection=True;"
+  }
+}
+```
+
+Replace <NAME_OF_YOUR_LOCAL_MSFT_SQL_Server> with the real connection.
+
 ## Build and Test
 
 Either with .NET CLI or Visual Studio
