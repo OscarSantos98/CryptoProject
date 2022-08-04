@@ -1,0 +1,34 @@
+# Ignore appsettings.Development.json
+CryptoAPI/CryptoAPI/appsettings.Development.json
+
+# Ignore Visual Studio temporary files, build results
+.vs/
+*/.vs
+
+# User-specific files
+*.suo
+*.user
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+[Rr]eleases/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+# Files built by Visual Studio
+*.obj
+*.log
+
+# Click-Once directory
+publish/
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Blazor
+*.assets.cache
+*.GeneratedMSBuildEditorConfig.editorconfig
