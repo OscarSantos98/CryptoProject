@@ -1,0 +1,1 @@
+Simple component for basic TradingView chart in Blazor supporting OHLC candle, volume and markers.
