@@ -1,0 +1,31 @@
+﻿
+html, body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color : white;
+    background-color: #01052F;
+}
+
+.container-chart-options {
+    width: 80%;
+    padding: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 25px;
+    border: 2px solid white;
+    background-color: #24263A;
+}
+
+.container-options {
+    padding: 10px;
+    width: 250px;
+    float: left;
+    background-color: #24263A;
+}
+
+.container-chart {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #24263A;
+}

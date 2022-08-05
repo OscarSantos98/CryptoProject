@@ -1,0 +1,82 @@
+﻿@page "/usersettings"
+@using Blazored.LocalStorage
+@using System.Security.Claims
+@using CryptoBlazor.Data
+@inject ILocalStorageService localStorageService
+@inject IAuthorizationService authorizationService
+@inject IThemeService themeService
+
+<h3>User settings</h3>
+<br />
+<br />
+<div style="padding-left : 250px; padding-right : 250px">
+
+
+    <div class="card" style="width: 18rem; float: left;">
+      <div class="card-body">
+        <h4 class="card-title">Your information</h4>
+        <p class="card-text">
+            <p>EMAIL</p>
+            <p>@user.Identity.Name</p>
+            <p>NAME</p>
+            <p>@user.Identity.Name</p>
+            <p>THEME</p>
+            <p>@theme.ThemeName</p>
+        </p>
+      </div>
+    </div>
+    <form class="card" style="width: 18rem; padding: 1rem; float:right;">
+         <h4 class="card-title">Change information</h4>
+          <div class="form-group">
+            <label for="email">NEW LOGIN</label>
+            <input type="email" class="form-control" id="email" placeholder="Enter email address">
+          </div>
+          <div class="form-group">
+            <label for="password">NEW PASSWORD</label>
+            <input type="password" class="form-control" id="password" placeholder="Password">
+          </div>
+          <div>
+              <label for="theme">THEME</label>
+                        <div class="form-check">
+                          <input class="form-check-input" type="radio" name="theme" id="theme1" value="option1" checked>
+                          <label class="form-check-label" for="theme1">
+                            Dark
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="radio" name="theme" id="theme2" value="option2">
+                          <label class="form-check-label" for="theme2">
+                            Light
+                          </label>
+                        </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">SAVE</button>
+    </form>
+
+</div>
+
+
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    ClaimsPrincipal user;
+    bool IsUserAuthenticated;
+    Theme theme;
+    string email;
+
+    protected override async Task OnInitializedAsync()
+    {
+        theme = new Theme();
+        theme.ThemeName = "light";
+        user = (await authenticationStateTask).User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            IsUserAuthenticated = true;
+        }
+        
+    }
+
+}

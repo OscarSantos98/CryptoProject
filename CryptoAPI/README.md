@@ -28,7 +28,6 @@ The following tools were used to design and develop the backend.
 5. [Visual Studio](https://visualstudio.microsoft.com/fr/)
 6. [POSTMAN](https://www.postman.com/)
 
-
 ### Installation
 
 1. Open Git Bash terminal and run the following cmd
@@ -109,7 +108,6 @@ The following image describes the schema and table connections.
 |                                                                    |                                                                                                 |                                                                                 |
 | Role table has a relationship **one-to-many** with User_actions table  | One role can have multiple user actions                                                         | Admin – update:userpassword                                                     |
 |                                                                    |                                                                                                 | Admin – delete:dashboard                                                            |
-
 
 ### Software dependencies
 
