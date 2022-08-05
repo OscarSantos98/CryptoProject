@@ -48,7 +48,7 @@ Then open SSMS, and select your local SQL Server, later you can connect to the A
 
 Once your server is opened, open the [CreateCryptoDB.sql](../assets/sql/CreateCryptoDB.sql) file with CTRL + O key shortcut and search it in your working directory. Or just create a new query and paste its content there.
 
-If you have already a database called CryptoDB, first run [DeleteCrypto.sql](../assets/sql/DeleteCrypto.sql) to delete it.
+If you have already a database called CryptoDB, first run [DeleteCryptoDB.sql](../assets/sql/DeleteCryptoDB.sql) to delete it.
 
 When you are ready, click on execute.
 
