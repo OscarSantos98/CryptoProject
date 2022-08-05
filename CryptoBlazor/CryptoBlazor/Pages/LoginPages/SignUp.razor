@@ -1,0 +1,77 @@
+﻿@layout CenteredCardLayout
+@page "/signup"
+@using CryptoBlazor.Data
+@using System.Security.Claims
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager;
+@inject Blazored.LocalStorage.ILocalStorageService localStorageService
+@inject IUserService userService
+
+
+
+<EditForm Model="@user" OnValidSubmit="@ValidateUser">
+    <div>
+        <br /><br /><br /><br /><br />
+    </div>
+
+    <div>
+        <h3 style="font-weight:bold; color:purple">Crypto App Login</h3>
+    </div>
+
+    <div>
+        <br />
+    </div>
+
+    <div class="col-12 row">
+        <input class="form-control col-12" @bind="user.Email" placeholder="email address" />
+    </div>
+    <br />
+
+ <div class="col-12 row">
+        <input type="password" class="form-control col-12" @bind="user.Password" placeholder="password" />
+    </div>
+    <br />
+    <div class="col-12 row">
+        <input type="password" class="form-control col-12" @bind="user.ConfirmPassword" placeholder="confirm password" />
+    </div>
+    <br />
+
+ <div class="col-12 row">
+        <span class="col-12"></span>
+        <input type="submit" class="form-control col-6 btn btn-primary" value="Sign up" />
+        <a href="/signup" class="col-3">Sign up</a>
+    </div>
+    <br />
+
+
+</EditForm>
+
+
+
+@code {
+
+
+    private User user;
+    public string LoginMessage { get; set; }
+
+    ClaimsPrincipal claimsPrincipal;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = new User();
+    }
+
+    private async Task<bool> ValidateUser()
+    {
+        var returnedUser = await userService.RegisterUserAsync(user);
+
+        ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsAuthenticated(returnedUser);
+        NavigationManager.NavigateTo("/index");
+        await localStorageService.SetItemAsync("emailAddress", user.Email);
+        return await Task.FromResult(true);
+    }
+} 

@@ -1,0 +1,190 @@
+﻿@page "/dashboard"
+
+@using System.Text.Json
+@using System.Text.Json.Serialization;
+@using CryptoBlazor.Data
+@using TradingView.Blazor
+@using TradingView.Blazor.Models
+@using Microsoft.JSInterop
+@inject ChartService chartService
+@inject IJSRuntime JSRuntime
+
+
+<h3>Dashboard</h3>
+
+<div class="container-chart-options">
+    <div class="container-chart">
+        <div class="container-options">
+            <label>Crypto pair: </label>
+           <SelectPair OnChangeEvent="@(e =>OnSelectPairChange(myChart, e))"></SelectPair>
+           
+        </div>
+       <div class="container-options">
+            <label>Time frame: </label>
+           <SelectTime OnChangeEvent="@(e => OnSelectTimeChange(myChart, e))"></SelectTime>
+       </div>
+        <div class="container-options">
+            <label>Number of values: </label>
+           <SelectLimit OnChangeEvent="@(e => OnSelectLimitChange(myChart, e))"></SelectLimit>
+        </div>
+        <br />
+        <br />
+      </div>
+        <div class="container-chart">
+            <TradingViewChart @ref=myChart />
+        </div>
+</div>
+
+<br /><br />
+
+<div class="container-chart-options">
+    <div class="container-chart">
+            <div class="container-options">
+                <label>Crypto pair: </label>
+               <SelectPair OnChangeEvent="@(e => OnSelectPairChange(myChart2, e))"></SelectPair>
+            </div>
+               <div class="container-options">
+                <label>Time frame: </label>
+               <SelectTime OnChangeEvent="@(e => OnSelectTimeChange(myChart2, e))"></SelectTime>
+           </div>
+            <div class="container-options">
+                <label>Number of values: </label>
+               <SelectLimit OnChangeEvent="@(e => OnSelectLimitChange(myChart2, e))"></SelectLimit>
+            </div>
+          </div>
+          <br />
+          <br />
+        <div class="container-chart">
+            <TradingViewChart @ref=myChart2 />
+        </div>
+</div>
+
+<footer>
+    DevOps Interns - 2022 
+</footer>
+
+
+
+@code {
+
+    TradingViewChart? myChart;
+    TradingViewChart? myChart2;
+    public string SelectedTime { get; set; }
+    public string SelectedPair { get; set; }
+    public int SelectedLimit { get; set; }
+    public CryptoRequest RequestParameters { get; set; }
+    string backgroundColor = "white";
+    string textColor = "black";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //initaliazing values
+        SelectedTime= "1m";
+        SelectedPair = "BTCUSD";
+        SelectedLimit = 120;
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Only on first render
+        if (!firstRender)
+            return;
+
+        //initalizing default crypto values to load charts
+        RequestParameters = new CryptoRequest();
+        RequestParameters.TimeFrame = SelectedTime;
+        RequestParameters.Symbol = SelectedPair;
+        RequestParameters.Section = "hist";
+        RequestParameters.limit = SelectedLimit;
+        RequestParameters.sort = -1;
+
+        // Load the data
+        ChartData data = new()
+        {
+            CandleData = await chartService.ProcessDataAsync(RequestParameters),
+            MarkerData = new(), // todo: NIY
+        };
+
+        // Optionally define options
+        ChartOptions options = new()
+            {
+                TimeScaleSecondsVisible = false,
+
+                // Setting width to a negative value makes the chart responsive
+                Width = -75,
+                LayoutBackgroundColor = backgroundColor,
+                LayoutTextColor = textColor,
+    };
+
+        // Load the chart
+        if (myChart != null)
+        {
+            await myChart.LoadChartAsync(data, options);
+        }
+
+        if (myChart2 != null)
+        {
+            await myChart2.LoadChartAsync(data, options);
+        }
+
+    }
+
+    public async Task UpdateChart(TradingViewChart chart) 
+    {
+        //updating values
+        RequestParameters = new CryptoRequest();
+        RequestParameters.TimeFrame = SelectedTime;
+        RequestParameters.Symbol = SelectedPair;
+        RequestParameters.Section = "hist";
+        RequestParameters.limit = SelectedLimit;
+        RequestParameters.sort = -1;
+
+        // update chart data
+        ChartData updatedChartData = new()
+        {
+            CandleData = await chartService.ProcessDataAsync(RequestParameters),
+            MarkerData = new(), // todo: NIY
+        };
+
+        //load chart
+        await chart.UpdateChartAsync(updatedChartData);
+    }
+
+    //when time frame changes
+    private void OnSelectTimeChange(TradingViewChart chart,ChangeEventArgs changeEventArgs)
+    {
+        SelectedTime = (string)changeEventArgs.Value;
+        UpdateChart(chart);
+
+    }
+
+    //when pair name changes
+    private void OnSelectPairChange(TradingViewChart chart, ChangeEventArgs changeEventArgs)
+    {
+        SelectedPair = (string)changeEventArgs.Value;
+        UpdateChart(chart);
+    }
+
+    //when number of values changes 
+    private void OnSelectLimitChange(TradingViewChart chart, ChangeEventArgs changeEventArgs)
+    {
+        SelectedLimit = System.Convert.ToInt32(changeEventArgs.Value);
+        UpdateChart(chart);
+    }
+
+    private void OnPairSearchTextChanged(ChangeEventArgs changeEventArgs)
+    {
+        List<String> pairList = new List<String> { "ETHBTC", "BTCUSD" };
+        string searchText = changeEventArgs.Value.ToString();
+       
+
+        SelectedPair = pairList.Where(pair => pair.ToUpper().Contains(searchText)).ToString();
+        //SelectedPair = pairList.Contains(searchText).ToString();
+
+        } 
+    }
+
+
+}

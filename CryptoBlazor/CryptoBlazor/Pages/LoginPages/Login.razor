@@ -1,0 +1,86 @@
+﻿@layout CenteredCardLayout
+@page "/"
+@page "/login"
+@using CryptoBlazor.Data
+@using Newtonsoft.Json
+@using System.Security.Claims;
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager;
+@inject Blazored.LocalStorage.ILocalStorageService localStorageService
+@inject IUserService userService
+@inject HttpClient Http
+    
+
+<h3>Login</h3>
+
+                
+<EditForm Model="@user" OnValidSubmit="@ValidateUser">
+    <div>
+        <br /><br /><br /><br /><br />
+    </div>
+    <div>
+        <h3 style="font-weight:bold; color:purple">Crypto App Login</h3>
+    </div>
+    <div>
+        <br />
+    </div>
+    <div class="col-12 row">
+        <input class="form-control col-12" @bind="user.Email" placeholder="email address" />
+    </div>
+    <br />
+    <div class="col-12 row">
+        <input type="password" class="form-control col-12" @bind="user.Password" placeholder="password" />
+    </div>
+    <br />
+    <div class="col-12 row">
+        <span class="col-12"></span>
+        <input type="submit" class="form-control col-6 btn btn-primary" value="Login" />
+        <a href="/signup" class="col-3">Sign up</a>
+    </div>
+</EditForm>
+
+
+@code {
+
+    private User user;
+    public string LoginMessage { get; set; }
+
+    ClaimsPrincipal claimsPrincipal;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        user = new User();
+        //claimsPrincipal = (await authenticationStateTask).User;
+
+
+        user.Email = "user@gmail.com";
+        user.Password = "userpassword";
+
+        return base.OnInitializedAsync();
+
+        
+      
+    }
+
+    private async Task<bool> ValidateUser()
+    {
+  
+     var returnedUser = await userService.LoginAsync(user);
+        Console.WriteLine("role: " + returnedUser.Email);
+
+        if (returnedUser.Email != null)
+        {
+            await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsAuthenticated(returnedUser);
+            NavigationManager.NavigateTo("/index");
+        }
+        else
+        {
+            LoginMessage = "Invalid username or password ";
+        }
+        return await Task.FromResult(true);
+    }
+
+} 
