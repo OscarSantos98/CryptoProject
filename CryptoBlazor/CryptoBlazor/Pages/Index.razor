@@ -1,0 +1,49 @@
+﻿@page "/index"
+@using Blazored.LocalStorage
+@using System.Security.Claims
+@using CryptoBlazor.Data
+@inject ILocalStorageService localStorageService
+@inject IAuthorizationService authorizationService
+@inject IThemeService themeService
+
+<PageTitle>Index</PageTitle>
+
+<h1>Follow your crypto</h1>
+
+@if (IsUserAuthenticated)
+{
+    <p>Hello <b>@user.Identity.Name</b>, welcome to your crypto app ! </p>
+    <br />
+     <p>If you want to check your settings go <a href="/usersettings">here</a></p>
+     <p>If you want to check your crypto go <a href="/dashboard">here</a></p>
+    @* <p>This is your theme : @theme.ThemeName</p>*@
+}
+else
+{
+    <h3><b>You are logged out.</b></h3>
+}
+
+  
+@code {
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    ClaimsPrincipal user;
+    bool IsUserAuthenticated;
+    Theme theme;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = (await authenticationStateTask).User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            IsUserAuthenticated = true;
+        }
+    }
+
+    private async void Theme() {
+
+    }
+ } 
+
